@@ -194,8 +194,8 @@ if __name__ == '__main__':
   # -- Note: Use validation set and disable the flipped to enable faster loading.
   cfg.TRAIN.USE_FLIPPED = True
   cfg.USE_GPU_NMS = args.cuda
-  imdb, roidb, ratio_list, ratio_index = combined_roidb(args.imdb_name)
-  train_size = len(roidb)
+  imdb, roidb, ratio_list, ratio_index = combined_roidb(args.imdb_name) # imdb_name 'voc_2007_trainval'
+  train_size = len(roidb) # 10022
 
   print('{:d} roidb entries'.format(len(roidb)))
 
