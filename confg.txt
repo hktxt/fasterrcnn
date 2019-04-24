@@ -26,6 +26,7 @@ pytorch 1.0.1, python 3.6
 6.  cd data
 
 	git clone https://github.com/pdollar/coco.git cd coco/PythonAPI
+	把makefile里面的python换成python3.6
 
 	make
 
