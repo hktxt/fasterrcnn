@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d55c596b-7173-454b-a61f-f904f35c1365" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/simple-faster-rcnn-pytorch/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/simple-faster-rcnn-pytorch/train.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/simple-faster-rcnn-pytorch/utils/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/simple-faster-rcnn-pytorch/utils/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.ipynb_checkpoints/train-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/.ipynb_checkpoints/train-checkpoint.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/train.ipynb" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -15,49 +16,47 @@
     <session id="-672451628">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="2" />
+          <entry key="project.closed" value="3" />
+          <entry key="project.open.time.15" value="1" />
           <entry key="project.open.time.2" value="1" />
           <entry key="project.open.time.4" value="1" />
-          <entry key="project.opened" value="2" />
+          <entry key="project.opened" value="3" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="py" value="21" />
+          <entry key="py" value="23" />
           <entry key="pyx" value="2" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
           <entry key="PLAIN_TEXT" value="2" />
-          <entry key="Python" value="21" />
+          <entry key="Python" value="23" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="Python Console" value="12" />
-          <entry key="py" value="10" />
+          <entry key="py" value="20" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="22" />
+          <entry key="Python" value="32" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/faster-rcnn.pytorch-pytorch-1.0/trainval_net.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="236">
-              <caret line="32" column="41" lean-forward="true" selection-start-line="32" selection-start-column="41" selection-end-line="32" selection-end-column="41" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -68,12 +67,12 @@
         <option value="$PROJECT_DIR$/simple-faster-rcnn-pytorch/train.py" />
         <option value="$PROJECT_DIR$/faster-rcnn.pytorch-pytorch-1.0/trainval_net.py" />
         <option value="$PROJECT_DIR$/simple-faster-rcnn-pytorch/utils/config.py" />
+        <option value="$PROJECT_DIR$/generate_anchors.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="2074" />
-    <option name="y" value="-13" />
+    <option name="x" value="2128" />
     <option name="width" value="1400" />
     <option name="height" value="955" />
   </component>
@@ -104,7 +103,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -118,7 +117,28 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.trainval_net">
+  <component name="RunManager" selected="Python.generate_anchors">
+    <configuration name="generate_anchors" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="Faster-RCNN" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/generate_anchors.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="train" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="Faster-RCNN" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -164,9 +184,11 @@
     <list>
       <item itemvalue="Python.trainval_net" />
       <item itemvalue="Python.train" />
+      <item itemvalue="Python.generate_anchors" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.generate_anchors" />
         <item itemvalue="Python.train" />
         <item itemvalue="Python.trainval_net" />
       </list>
@@ -194,7 +216,7 @@
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.36437246" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.18218623" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -232,11 +254,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/faster-rcnn.pytorch-pytorch-1.0/lib/pycocotools/coco.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1056">
-          <folding>
-            <element signature="e#0#37#0" expanded="true" />
-          </folding>
-        </state>
+        <state relative-caret-position="-1056" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/faster-rcnn.pytorch-pytorch-1.0/lib/datasets/coco.py">
@@ -259,13 +277,7 @@
       </provider>
     </entry>
     <entry file="file://$USER_HOME$/Anaconda3/envs/pytorch/Lib/site-packages/torch/utils/data/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <folding>
-            <element signature="e#1#121#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$USER_HOME$/Anaconda3/envs/pytorch/Lib/site-packages/torch/utils/data/dataloader.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -283,11 +295,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/simple-faster-rcnn-pytorch/model/faster_rcnn.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-6166">
-          <folding>
-            <element signature="e#0#39#0" expanded="true" />
-          </folding>
-        </state>
+        <state relative-caret-position="-6166" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/simple-faster-rcnn-pytorch/utils/config.py">
@@ -314,7 +322,14 @@
     <entry file="file://$PROJECT_DIR$/faster-rcnn.pytorch-pytorch-1.0/trainval_net.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="236">
-          <caret line="32" column="41" lean-forward="true" selection-start-line="32" selection-start-column="41" selection-end-line="32" selection-end-column="41" />
+          <caret line="32" column="41" selection-start-line="32" selection-start-column="41" selection-end-line="32" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/generate_anchors.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="308">
+          <caret line="93" column="9" lean-forward="true" selection-start-line="93" selection-start-column="9" selection-end-line="93" selection-end-column="10" />
         </state>
       </provider>
     </entry>
