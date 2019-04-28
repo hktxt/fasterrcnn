@@ -13,6 +13,7 @@ class Config:
     max_size = 1000 # image resize
     num_workers = 8
     test_num_workers = 8
+    batch_size = 2
 
     # sigma for l1_smooth_loss
     rpn_sigma = 3.
