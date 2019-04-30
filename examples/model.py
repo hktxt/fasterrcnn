@@ -1,8 +1,10 @@
+import torch
 import torch.nn as nn
 from roi_pooling import roi_pooling as _roi_pooling
 
 from rpn import RPN as _RPN
 from faster_rcnn import FasterRCNN as _FasterRCNN
+
 
 class _Features(nn.Container):
   def __init__(self):
@@ -11,6 +13,7 @@ class _Features(nn.Container):
 
   def forward(self, x):
     return self.m(x)
+
 
 class _Classifier(nn.Container):
   def __init__(self):
@@ -21,9 +24,11 @@ class _Classifier(nn.Container):
   def forward(self, x):
     return self.m1(x), self.m2(x)
 
+
 def _pooler(x, rois):
-  x = _roi_pooling(x, rois, size=(7,7), spatial_scale=1.0/16.0)
+  x = _roi_pooling(x, rois, size=(7, 7), spatial_scale=1.0/16.0)
   return x.view(x.size(0), -1)
+
 
 class _RPNClassifier(nn.Container):
   def __init__(self, n):
@@ -33,6 +38,7 @@ class _RPNClassifier(nn.Container):
 
   def forward(self, x):
     return self.m1(x), self.m2(x)
+
 
 def model():
   _features = _Features()
@@ -49,3 +55,12 @@ def model():
     rpn=_rpn
   )
   return _model
+
+
+net = model()
+ip = torch.Tensor(1, 3, 800, 800)
+gt = torch.Tensor(1, 2, 4)
+_features = _Features()
+#print(_features(ip).shape)  # torch.Size([1, 3, 50, 50])
+net(ip)
+

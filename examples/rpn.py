@@ -50,8 +50,8 @@ class RPN(nn.Container):
     self._feat_stride = round(im.size(3)/feats.size(3))
     # rpn
     # put in a separate function
-    rpn_map, rpn_bbox_pred = self.rpn_classifier(feats)
-    all_anchors = self.rpn_get_anchors(feats)
+    rpn_map, rpn_bbox_pred = self.rpn_classifier(feats) # 1 18 50 50 ; 1 36 50 50
+    all_anchors = self.rpn_get_anchors(feats) # 22500,4
     rpn_loss = None
     #if self.training is True:
     if gt is not None:
@@ -97,7 +97,8 @@ class RPN(nn.Container):
   # shouldn't we instead keep only the bboxes for which labels >= 0?
   def rpn_targets(self, all_anchors, im, gt):
     total_anchors = all_anchors.shape[0]
-    gt_boxes = gt['boxes']
+    #gt_boxes = gt['boxes']
+    gt_boxes = gt
 
     height, width = im.size()[-2:]
     # only keep anchors inside the image

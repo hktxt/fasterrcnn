@@ -42,7 +42,6 @@ class_to_ind = dict(zip(cls, range(len(cls))))
 
 args = parser.parse_args()
 model = importlib.import_module(args.model).model()
-print(model)
 model_test = importlib.import_module(args.model).model()
 model_test.load_state_dict(model.state_dict())
 
@@ -167,7 +166,7 @@ for epoch in range(0, 10):
   train(train_loader, model, optimizer, epoch)
   #validate(val_loader, model)
 
-#from IPython import embed; embed()
+from IPython import embed; embed()
 
-#if __name__ == '__main__':
-#  main()
+if __name__ == '__main__':
+    main()

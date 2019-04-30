@@ -9,6 +9,7 @@ from utils import \
 
 from utils import to_var as _tovar
 
+
 # should handle multiple scales, how?
 class FasterRCNN(nn.Container):
 
@@ -43,9 +44,10 @@ class FasterRCNN(nn.Container):
 
     assert im.size(0) == 1, 'only single element batches supported'
 
-    feats = self.features(_tovar(im))
+    feats = self.features(_tovar(im)) # torch.Size([1, 3, 50, 50])
 
     roi_boxes, rpn_prob, rpn_loss = self.rpn(im, feats, gt)
+    #2000,4; 2000,1
 
     #if self.training is True:
     if gt is not None:

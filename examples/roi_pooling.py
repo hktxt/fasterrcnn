@@ -6,6 +6,7 @@ import math
 from torch.autograd.function import Function
 from torch._thnn import type2backend
 
+
 class AdaptiveMaxPool2d(Function):
     def __init__(self, out_w, out_h):
         super(AdaptiveMaxPool2d, self).__init__()
