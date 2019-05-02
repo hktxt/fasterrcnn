@@ -18,7 +18,8 @@ class AdaptiveMaxPool2d(Function):
         indices = input.new().long()
         self.save_for_backward(input)
         self.indices = indices
-        self._backend = type2backend[type(input)]
+        #self._backend = type2backend[type(input)]
+        self._backend = type2backend[input.type()]
         self._backend.SpatialAdaptiveMaxPooling_updateOutput(
                 self._backend.library_state, input, output, indices,
                 self.out_w, self.out_h)
@@ -52,6 +53,24 @@ def roi_pooling(input, rois, size=(7,7), spatial_scale=1.0):
         output.append(adaptive_max_pool(im, size))
 
     return torch.cat(output, 0)
+
+def roi_pooling1(input, rois, size=(7,7), spatial_scale=1.0):
+    assert(rois.dim() == 2)
+    assert(rois.size(1) == 4)
+    output = []
+    rois = rois.data.float()
+    num_rois = rois.size(0)
+    
+    rois.mul_(spatial_scale)
+    rois = rois.long()
+    for i in range(num_rois):
+        roi = rois[i]
+        im_idx = roi[0]
+        im = input.narrow(0, im_idx, 1)[..., roi[1]:(roi[3]+1), roi[0]:(roi[2]+1)]
+        output.append(adaptive_max_pool(im, size))
+
+    return torch.cat(output, 0)
+
 
 if __name__ == '__main__':
     input = ag.Variable(torch.rand(1,1,10,10), requires_grad=True)
