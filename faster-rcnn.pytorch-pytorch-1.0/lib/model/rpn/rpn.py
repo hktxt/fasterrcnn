@@ -14,6 +14,7 @@ import math
 import pdb
 import time
 
+
 class _RPN(nn.Module):
     """ region proposal network """
     def __init__(self, din):
