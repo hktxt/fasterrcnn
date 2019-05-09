@@ -1,6 +1,8 @@
+import torch
 import torch.nn as nn
 from .rpn import _RPN
 from .proposal_target_layer_cascade import _ProposalTargetLayer
+
 
 class _fasterRCNN(nn.Module):
     """ faster RCNN """

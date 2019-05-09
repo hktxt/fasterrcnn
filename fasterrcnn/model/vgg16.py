@@ -1,8 +1,10 @@
+import torch
 import torch.nn as nn
 from .faster_rcnn import _fasterRCNN
 import torchvision.models as models
 
-class vgg16(_fasterRCNN):
+
+class VGG16(_fasterRCNN):
     def __init__(self, classes, pretrained=False, class_agnostic=False):
         self.model_path = 'data/pretrained_model/vgg16_caffe.pth'
         self.dout_base_model = 512

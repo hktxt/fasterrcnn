@@ -2,6 +2,7 @@ import torch.nn as nn
 from torch.autograd import Function
 from torch.nn.modules.utils import _pair
 
+
 class _ROIPool(Function):
     @staticmethod
     def forward(ctx, input, roi, output_size, spatial_scale):
