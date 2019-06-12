@@ -69,7 +69,7 @@ def preprocess(img, min_size=600, max_size=1000):
     scale2 = max_size / max(H, W)
     scale = min(scale1, scale2)
     img = img / 255.
-    img = sktsf.resize(img, (C, H * scale, W * scale), mode='reflect',anti_aliasing=False)
+    img = sktsf.resize(img, (C, H * scale, W * scale), mode='reflect', anti_aliasing=False)
     # both the longer and shorter should be less than
     # max_size and min_size
 
@@ -108,7 +108,7 @@ class LoadDataset(Dataset):
         self.use_difficult = use_difficult
         self.return_difficult = return_difficult
         self.train = train
-        self.transform = transforms
+        self.transform = transform
         VOC_BBOX_LABEL_NAMES = (
             'aeroplane',
             'bicycle',
