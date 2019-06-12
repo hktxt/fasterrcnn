@@ -3,21 +3,16 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable
-import torchvision.models as models
-from torch.autograd import Variable
-import numpy as np
 from model.utils.config import cfg
 from model.rpn.rpn import _RPN
-
 from model.roi_layers import ROIAlign, ROIPool
 
 # from model.roi_pooling.modules.roi_pool import _RoIPooling
 # from model.roi_align.modules.roi_align import RoIAlignAvg
 
 from model.rpn.proposal_target_layer_cascade import _ProposalTargetLayer
-import time
-import pdb
 from model.utils.net_utils import _smooth_l1_loss, _crop_pool_layer, _affine_grid_gen, _affine_theta
+
 
 class _fasterRCNN(nn.Module):
     """ faster RCNN """
@@ -48,7 +43,7 @@ class _fasterRCNN(nn.Module):
         num_boxes = num_boxes.data
 
         # feed image data to base model to obtain base feature map
-        base_feat = self.RCNN_base(im_data)  # size: 1,3,600,900 -> 1,512,37,56
+        base_feat = self.RCNN_base(im_data)
 
         # feed base feature map tp RPN to obtain rois
         rois, rpn_loss_cls, rpn_loss_bbox = self.RCNN_rpn(base_feat, im_info, gt_boxes, num_boxes)

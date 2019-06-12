@@ -153,7 +153,7 @@ if __name__ == '__main__':
   print(args)
 
   if args.dataset == "pascal_voc":
-      args.imdb_name = "voc_2007_trainval"
+      args.imdb_name = "voc_2007_one" #"voc_2007_trainval"
       args.imdbval_name = "voc_2007_test"
       args.set_cfgs = ['ANCHOR_SCALES', '[8, 16, 32]', 'ANCHOR_RATIOS', '[0.5,1,2]', 'MAX_NUM_GT_BOXES', '20']
   elif args.dataset == "pascal_voc_0712":
@@ -308,10 +308,10 @@ if __name__ == '__main__':
     data_iter = iter(dataloader)
     for step in range(iters_per_epoch):
       data = next(data_iter)
-      im_data.data.resize_(data[0].size()).copy_(data[0])
-      im_info.data.resize_(data[1].size()).copy_(data[1])
-      gt_boxes.data.resize_(data[2].size()).copy_(data[2])
-      num_boxes.data.resize_(data[3].size()).copy_(data[3])
+      im_data.data.resize_(data[0].size()).copy_(data[0])  # torch.size([1,3,600,901])
+      im_info.data.resize_(data[1].size()).copy_(data[1])  # tensor([[600.0000, 901.0000, 1.8018]]
+      gt_boxes.data.resize_(data[2].size()).copy_(data[2])  # [279.2793, 172.9730, 630.6306, 484.6847, 7.0000]
+      num_boxes.data.resize_(data[3].size()).copy_(data[3])  # 1
 
       fasterRCNN.zero_grad()
       rois, cls_prob, bbox_pred, \
