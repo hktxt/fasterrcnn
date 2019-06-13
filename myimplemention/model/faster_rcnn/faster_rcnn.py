@@ -1,11 +1,13 @@
-import random
 import torch
+import torchvision
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable
-from model.utils.config import cfg
+from utils.config import opt
 from model.rpn.rpn import _RPN
-from model.roi_layers import ROIAlign, ROIPool
+from ..roi_layers.roi_layer import roi_pool_layer, roi_align_layer
+
+#from model.roi_layers import ROIAlign, ROIPool
 
 # from model.roi_pooling.modules.roi_pool import _RoIPooling
 # from model.roi_align.modules.roi_align import RoIAlignAvg
@@ -29,11 +31,13 @@ class _fasterRCNN(nn.Module):
         self.RCNN_rpn = _RPN(self.dout_base_model)
         self.RCNN_proposal_target = _ProposalTargetLayer(self.n_classes)
 
-        # self.RCNN_roi_pool = _RoIPooling(cfg.POOLING_SIZE, cfg.POOLING_SIZE, 1.0/16.0)
-        # self.RCNN_roi_align = RoIAlignAvg(cfg.POOLING_SIZE, cfg.POOLING_SIZE, 1.0/16.0)
+        # self.RCNN_roi_pool = _RoIPooling(opt.pooling_size, opt.pooling_size, 1.0/16.0)
+        # self.RCNN_roi_align = RoIAlignAvg(opt.pooling_size, opt.pooling_size, 1.0/16.0)
 
-        self.RCNN_roi_pool = ROIPool((cfg.POOLING_SIZE, cfg.POOLING_SIZE), 1.0/16.0)
-        self.RCNN_roi_align = ROIAlign((cfg.POOLING_SIZE, cfg.POOLING_SIZE), 1.0/16.0, 0)
+        # self.RCNN_roi_pool = ROIPool((opt.pooling_size, opt.pooling_size), 1.0/16.0)
+        # self.RCNN_roi_align = ROIAlign((opt.pooling_size, opt.pooling_size), 1.0/16.0, 0)
+        self.RCNN_roi_pool = roi_pool_layer
+        self.RCNN_roi_align = roi_align_layer
 
     def forward(self, im_data, im_info, gt_boxes, num_boxes):
         batch_size = im_data.size(0)
@@ -43,7 +47,7 @@ class _fasterRCNN(nn.Module):
         num_boxes = num_boxes.data
 
         # feed image data to base model to obtain base feature map
-        base_feat = self.RCNN_base(im_data)
+        base_feat = self.RCNN_base(im_data)  # torch.Size([1, 512, 53, 37])
 
         # feed base feature map tp RPN to obtain rois
         rois, rpn_loss_cls, rpn_loss_bbox = self.RCNN_rpn(base_feat, im_info, gt_boxes, num_boxes)
@@ -68,10 +72,10 @@ class _fasterRCNN(nn.Module):
         rois = Variable(rois)
         # do roi pooling based on predicted rois
 
-        if cfg.POOLING_MODE == 'align':
-            pooled_feat = self.RCNN_roi_align(base_feat, rois.view(-1, 5))
-        elif cfg.POOLING_MODE == 'pool':
-            pooled_feat = self.RCNN_roi_pool(base_feat, rois.view(-1,5))
+        if opt.pooling_mode == 'align':
+            pooled_feat = self.RCNN_roi_align(base_feat, rois)
+        elif opt.pooling_mode == 'pool':
+            pooled_feat = self.RCNN_roi_pool(base_feat, rois)
 
         # feed pooled features to top model
         pooled_feat = self._head_to_tail(pooled_feat)
@@ -98,7 +102,6 @@ class _fasterRCNN(nn.Module):
             # bounding box regression L1 loss
             RCNN_loss_bbox = _smooth_l1_loss(bbox_pred, rois_target, rois_inside_ws, rois_outside_ws)
 
-
         cls_prob = cls_prob.view(batch_size, rois.size(1), -1)
         bbox_pred = bbox_pred.view(batch_size, rois.size(1), -1)
 
@@ -116,11 +119,11 @@ class _fasterRCNN(nn.Module):
                 m.weight.data.normal_(mean, stddev)
                 m.bias.data.zero_()
 
-        normal_init(self.RCNN_rpn.RPN_Conv, 0, 0.01, cfg.TRAIN.TRUNCATED)
-        normal_init(self.RCNN_rpn.RPN_cls_score, 0, 0.01, cfg.TRAIN.TRUNCATED)
-        normal_init(self.RCNN_rpn.RPN_bbox_pred, 0, 0.01, cfg.TRAIN.TRUNCATED)
-        normal_init(self.RCNN_cls_score, 0, 0.01, cfg.TRAIN.TRUNCATED)
-        normal_init(self.RCNN_bbox_pred, 0, 0.001, cfg.TRAIN.TRUNCATED)
+        normal_init(self.RCNN_rpn.RPN_Conv, 0, 0.01, opt.train_truncated)
+        normal_init(self.RCNN_rpn.RPN_cls_score, 0, 0.01, opt.train_truncated)
+        normal_init(self.RCNN_rpn.RPN_bbox_pred, 0, 0.01, opt.train_truncated)
+        normal_init(self.RCNN_cls_score, 0, 0.01, opt.train_truncated)
+        normal_init(self.RCNN_bbox_pred, 0, 0.001, opt.train_truncated)
 
     def create_architecture(self):
         self._init_modules()
