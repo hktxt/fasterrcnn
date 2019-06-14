@@ -40,8 +40,11 @@ def parse_args():
     parser.add_argument('--disp_interval', dest='disp_interval',
                         help='number of iterations to display',
                         default=5, type=int)
-    parser.add_argument('--save_dir', dest='save_dir',
+    parser.add_argument('--log_dir', dest='logs',
                         help='directory to save models', default="logs",
+                        type=str)
+    parser.add_argument('--save_dir', dest='save_dir',
+                        help='directory to save models', default="output",
                         type=str)
     parser.add_argument('--nw', dest='num_workers',
                         help='number of worker to load data',
@@ -213,6 +216,7 @@ if __name__ == '__main__':
                     }
                     writer.add_scalars("losses", info, (epoch - 1) * len(trainloader) + step)
                 loss_temp = 0
+                start = time.time()
 
         save_name = os.path.join(output_dir, 'faster_rcnn_{}_{}.pth'.format(args.net, epoch))
         save_checkpoint({

@@ -147,3 +147,6 @@ if __name__ == '__main__':
         det_toc = time.time()
         detect_time = det_toc - det_tic
         misc_tic = time.time()
+
+
+# https://github.com/ruotianluo/pytorch-faster-rcnn/blob/master/lib/model/test.py#L98
