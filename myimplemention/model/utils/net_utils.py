@@ -127,17 +127,17 @@ def _crop_pool_layer(bottom, rois, max_pool=True):
       (y1 + y2 - height + 1) / (height - 1)], 1).view(-1, 2, 3)
 
     if max_pool:
-      pre_pool_size = opt.pooling_size * 2
-      grid = F.affine_grid(theta, torch.Size((rois.size(0), 1, pre_pool_size, pre_pool_size)))
-      bottom = bottom.view(1, batch_size, D, H, W).contiguous().expand(roi_per_batch, batch_size, D, H, W)\
+        pre_pool_size = opt.pooling_size * 2
+        grid = F.affine_grid(theta, torch.Size((rois.size(0), 1, pre_pool_size, pre_pool_size)))
+        bottom = bottom.view(1, batch_size, D, H, W).contiguous().expand(roi_per_batch, batch_size, D, H, W)\
                                                                 .contiguous().view(-1, D, H, W)
-      crops = F.grid_sample(bottom, grid)
-      crops = F.max_pool2d(crops, 2, 2)
+        crops = F.grid_sample(bottom, grid)
+        crops = F.max_pool2d(crops, 2, 2)
     else:
-      grid = F.affine_grid(theta, torch.Size((rois.size(0), 1, opt.pooling_size, opt.pooling_size)))
-      bottom = bottom.view(1, batch_size, D, H, W).contiguous().expand(roi_per_batch, batch_size, D, H, W)\
+        grid = F.affine_grid(theta, torch.Size((rois.size(0), 1, opt.pooling_size, opt.pooling_size)))
+        bottom = bottom.view(1, batch_size, D, H, W).contiguous().expand(roi_per_batch, batch_size, D, H, W)\
                                                                 .contiguous().view(-1, D, H, W)
-      crops = F.grid_sample(bottom, grid)
+        crops = F.grid_sample(bottom, grid)
 
     return crops, grid
 

@@ -73,7 +73,7 @@ class _ProposalLayer(nn.Module):
         nms_thresh = opt.nms_thresh       # 0.7
         min_size = opt.rpn_min_size        # 8
 
-        batch_size = opt.bs
+        batch_size = bbox_deltas.size(0)
 
         feat_height, feat_width = scores.size(2), scores.size(3)  # 37, 56
         shift_x = np.arange(0, feat_width) * self._feat_stride

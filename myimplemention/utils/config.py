@@ -12,8 +12,6 @@ class Config:
     min_size = 600   # image resize
     max_size = 1000  # image resize
     disp_interval = 100
-    num_workers = 0
-    bs = 1
     test_num_workers = 0
 
     # sigma for l1_smooth_loss
@@ -23,20 +21,17 @@ class Config:
     # resume
     resume = False
 
+    logs = 'logs'
+    save_dir = 'output'
+
     # param for optimizer
     # 0.0005 in origin paper but 0.0001 in tf-faster-rcnn
     weight_decay = 0.0005
-    lr_decay = 0.1  # 1e-3 -> 1e-4
-    lr = 1e-3
+    lr_decay_gamma = 0.1  # 1e-3 -> 1e-4
     train_momentum = 0.9
     train_double_bias = True
     train_bias_decay = False
     lr_decay_step = 5
-
-    # model
-    net = 'vgg16'
-
-    optimizer = 'sgd'
 
     # training
     epochs = 20
@@ -73,10 +68,6 @@ class Config:
     bbox_normalize_stds = (0.1, 0.1, 0.2, 0.2)
 
     bbox_normalize_targets_precomputed = True
-
-    use_adam = False     # Use Adam optimizer
-    use_chainer = False  # try match everything as chainer
-    use_drop = False     # use dropout in RoIHead
 
     train_truncated = False
 

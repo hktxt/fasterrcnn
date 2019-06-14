@@ -93,9 +93,9 @@ class Transform(object):
 
 
 class Dataset:
-    def __init__(self, opt):
+    def __init__(self, opt, split):
         self.opt = opt
-        self.db = VOCBboxDataset(opt.voc_data_dir)
+        self.db = VOCBboxDataset(opt.voc_data_dir, split=split)
         self.tsf = Transform(opt.min_size, opt.max_size)
 
     def __getitem__(self, idx):
@@ -104,8 +104,8 @@ class Dataset:
         img, bbox, label, scale = self.tsf((ori_img, bbox, label))
 
         # suit for Net input
-        im_info = np.array((img.shape[1], img.shape[2], scale))
-        gt_boxes = np.append(bbox, label[:, np.newaxis], axis=1)
+        im_info = np.array((img.shape[1], img.shape[2], scale), dtype=np.float32)
+        gt_boxes = np.append(bbox, label[:, np.newaxis], axis=1).astype(np.float32)
         num_boxes = gt_boxes.shape[0]
         # fix some of the strides of a given numpy array are negative.
         # https://discuss.pytorch.org/t/torch-from-numpy-not-support-negative-strides/3663

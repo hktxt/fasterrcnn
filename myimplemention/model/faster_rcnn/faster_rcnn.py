@@ -69,13 +69,13 @@ class _fasterRCNN(nn.Module):
             rpn_loss_cls = 0
             rpn_loss_bbox = 0
 
-        rois = Variable(rois)
+        rois = Variable(rois)  # torch.Size([1, 256, 5])
         # do roi pooling based on predicted rois
 
         if opt.pooling_mode == 'align':
-            pooled_feat = self.RCNN_roi_align(base_feat, rois)
+            pooled_feat = self.RCNN_roi_align(base_feat, rois.view(-1, 5))
         elif opt.pooling_mode == 'pool':
-            pooled_feat = self.RCNN_roi_pool(base_feat, rois)
+            pooled_feat = self.RCNN_roi_pool(base_feat, rois.view(-1, 5))
 
         # feed pooled features to top model
         pooled_feat = self._head_to_tail(pooled_feat)
