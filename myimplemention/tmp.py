@@ -3,7 +3,6 @@ from __future__ import division
 from __future__ import print_function
 
 import os
-import sys
 import numpy as np
 import argparse
 import time
@@ -19,7 +18,7 @@ from model.utils.net_utils import save_net, load_net, vis_detections
 from model.faster_rcnn.vgg16 import VGG16
 from utils import torch_utils
 # specify visible GPUs
-os.environ["CUDA_VISIBLE_DEVICES"] = '7'
+os.environ["CUDA_VISIBLE_DEVICES"] = '0'
 
 
 def parse_args():

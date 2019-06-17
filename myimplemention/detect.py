@@ -19,7 +19,7 @@ from model.utils.net_utils import save_net, load_net, vis_detections
 from model.faster_rcnn.vgg16 import VGG16
 from utils import torch_utils
 # specify visible GPUs
-os.environ["CUDA_VISIBLE_DEVICES"] = '7'
+os.environ["CUDA_VISIBLE_DEVICES"] = '0'
 
 
 def parse_args():
@@ -48,18 +48,6 @@ def parse_args():
     parser.add_argument('--save_dir', dest='save_dir',
                         help='directory to load images for demo',
                         default="images")
-    parser.add_argument('--cuda', dest='cuda',
-                        help='whether use CUDA',
-                        action='store_true')
-    parser.add_argument('--mGPUs', dest='mGPUs',
-                        help='whether use multiple GPUs',
-                        action='store_true')
-    parser.add_argument('--cag', dest='class_agnostic',
-                        help='whether perform class_agnostic bbox regression',
-                        action='store_true')
-    parser.add_argument('--parallel_type', dest='parallel_type',
-                        help='which part of model to parallel, 0: all, 1: model before roi pooling',
-                        default=0, type=int)
     parser.add_argument('--checkepoch', dest='checkepoch',
                         help='checkepoch to load network',
                         default=0, type=int)
@@ -120,10 +108,6 @@ if __name__ == '__main__':
     device = torch_utils.select_device()
     print('Called with args:')
     print(args)
-
-
-    # train set
-    # -- Note: Use validation set and disable the flipped to enable faster loading.
 
     input_dir = args.load_dir + "/" + args.net
     if not os.path.exists(input_dir):

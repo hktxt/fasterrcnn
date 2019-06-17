@@ -25,7 +25,7 @@ def parse_args():
                         default='pascal_voc', type=str)
     parser.add_argument('--train_split', dest='train_split',
                         help='splitting train set',
-                        default='one', type=str)
+                        default='trainval', type=str)
     parser.add_argument('--test_split', dest='test_split',
                         help='splitting test set',
                         default='test', type=str)
@@ -99,7 +99,7 @@ if __name__ == '__main__':
     print("Loading train data...")
     if args.dataset == "pascal_voc":
         dataset = Dataset(opt, split=args.train_split)
-        testset = Dataset(opt, split='test1', filp=False)
+        testset = Dataset(opt, split='test', filp=False)
         classes = dataset.db.label_names
         print("{} images were loaded from {}".format(len(dataset), opt.voc_data_dir))
         print("{} classes: {}".format(len(classes), classes))

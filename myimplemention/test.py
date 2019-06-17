@@ -101,10 +101,10 @@ if __name__ == '__main__':
 
     testloader = torch.utils.data.DataLoader(dataset, batch_size=1, num_workers=args.num_workers, shuffle=False)
     model_dir = args.load_dir + "/" + args.net
-    if not os.path.exists(model_dir):
-        raise Exception('There is no input directory for loading network from: ' + model_dir)
+    #if not os.path.exists(model_dir):
+        #raise Exception('There is no input directory for loading network from: ' + model_dir)
     load_name = os.path.join(model_dir, 'faster_rcnn_{}_{}.pth'.format(args.net, args.checkepoch))
-    #load_name = os.path.join(model_dir, 'faster_rcnn_1_20_5010.pth')
+    load_name = os.path.join('E:/', 'faster_rcnn_1_20_5010.pth')
 
     if args.net == 'vgg16':
         fasterRCNN = VGG16(classes, pretrained=False, class_agnostic=False)
@@ -116,6 +116,7 @@ if __name__ == '__main__':
     except:  # CPU
         checkpoint = torch.load(load_name, map_location=lambda storage, loc: storage)
     fasterRCNN.load_state_dict(checkpoint['model'])
+    fasterRCNN.to(device)
     if 'pooling_mode' in checkpoint.keys():
         opt.pooling_mode = checkpoint['pooling_mode']
     print('load model successfully!')
@@ -139,7 +140,6 @@ if __name__ == '__main__':
     det_file = os.path.join(output_dir, 'detections.pkl')
 
     for i, (img, im_info, gt_boxes, num_boxes) in enumerate(tqdm(testloader)):
-        print(i)
         img, im_info, gt_boxes, num_boxes = img.to(device), im_info.to(device), gt_boxes.to(device), num_boxes.to(
             device)
         rois, cls_prob, bbox_pred, rpn_loss_cls, rpn_loss_box, RCNN_loss_cls, RCNN_loss_bbox, rois_label \
