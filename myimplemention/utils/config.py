@@ -1,5 +1,6 @@
 # from https://github.com/chenyuntc/simple-faster-rcnn-pytorch/blob/master/utils/config.py
 from pprint import pprint
+import numpy as np
 
 
 # Default Configs for training
@@ -9,6 +10,7 @@ from pprint import pprint
 class Config:
     # data
     voc_data_dir = 'E:/data/voc07/VOCdevkit/VOC2007'
+    year = '2007'
     min_size = 600   # image resize
     max_size = 1000  # image resize
     disp_interval = 100
@@ -23,6 +25,7 @@ class Config:
 
     logs = 'logs'
     save_dir = 'output'
+    output_dir = 'result'
 
     # param for optimizer
     # 0.0005 in origin paper but 0.0001 in tf-faster-rcnn
@@ -59,6 +62,11 @@ class Config:
     rpn_batchsize = 256
     rpn_bbox_inside_weights = (1.0, 1.0, 1.0, 1.0)
     rpn_positive_weight = -1.0
+    PIXEL_MEANS = np.array([[[102.9801, 115.9465, 122.7717]]])
+    TEST_SCALES = (600,)
+    TEST_MAX_SIZE = 1000
+    TEST_BBOX_REG = True
+    TEST_NMS = 0.3
 
     fg_thresh = 0.5
     bg_thresh_hi = 0.5

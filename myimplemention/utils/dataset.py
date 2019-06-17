@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 from __future__ import division
 import torch as t
+from torch.utils.data import Dataset
 from utils.voc_dataset import VOCBboxDataset
 from skimage import transform as sktsf
 from torchvision import transforms as tvtsf
@@ -71,9 +72,10 @@ def preprocess(img, min_size=600, max_size=1000):
 
 class Transform(object):
 
-    def __init__(self, min_size=600, max_size=1000):
+    def __init__(self, min_size=600, max_size=1000, filp=True):
         self.min_size = min_size
         self.max_size = max_size
+        self.filp = filp
 
     def __call__(self, in_data):
         img, bbox, label = in_data
@@ -84,19 +86,21 @@ class Transform(object):
         bbox = util.resize_bbox(bbox, (H, W), (o_H, o_W))
 
         # horizontally flip
-        img, params = util.random_flip(
-            img, x_random=True, return_param=True)
-        bbox = util.flip_bbox(
-            bbox, (o_H, o_W), x_flip=params['x_flip'])
+        if self.filp:
+            img, params = util.random_flip(
+                img, x_random=True, return_param=True)
+            bbox = util.flip_bbox(
+                bbox, (o_H, o_W), x_flip=params['x_flip'])
 
         return img, bbox, label, scale
 
 
 class Dataset:
-    def __init__(self, opt, split):
+    def __init__(self, opt, split, filp=True):
         self.opt = opt
+        self.filp = filp
         self.db = VOCBboxDataset(opt.voc_data_dir, split=split)
-        self.tsf = Transform(opt.min_size, opt.max_size)
+        self.tsf = Transform(opt.min_size, opt.max_size, filp=self.filp)
 
     def __getitem__(self, idx):
         ori_img, bbox, label, difficult = self.db.get_example(idx)
@@ -124,8 +128,33 @@ class TestDataset:
 
     def __getitem__(self, idx):
         ori_img, bbox, label, difficult = self.db.get_example(idx)
+        _, H, W = ori_img.shape
         img = preprocess(ori_img)
-        return img, ori_img.shape[1:], bbox, label, difficult
+        _, o_H, o_W = img.shape
+        scale = o_H / H
+
+        # suit for Net input
+        im_info = np.array((img.shape[1], img.shape[2], scale), dtype=np.float32)
+        gt_boxes = np.append(bbox, label[:, np.newaxis], axis=1).astype(np.float32)
+        num_boxes = gt_boxes.shape[0]
+        # fix some of the strides of a given numpy array are negative.
+        # https://discuss.pytorch.org/t/torch-from-numpy-not-support-negative-strides/3663
+        return img.copy(), im_info.copy(), gt_boxes.copy(), num_boxes
+        #return img, ori_img.shape[1:], bbox, label, difficult
 
     def __len__(self):
         return len(self.db)
+
+
+class CusDataset(Dataset):
+    def __init__(self, path='E:/condaDev/fasterrcnn/myimplemention/samples/'):
+        with open(path, 'r') as f:
+            self.images = f.read().splitlines()
+            self.images = list(filter(lambda x: len(x) > 0, self.images))
+        assert len(self.images) > 0, 'No images found in {}'.format(path)
+
+    def __len__(self):
+        return len(self.images)
+
+    def __getitem__(self, idx):
+        img_pth = self.images[idx]
