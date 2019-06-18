@@ -1,7 +1,7 @@
 ### Faster-RCNN
 Faster-RCNN PyTorch Implementation.
 
-![Vector](images/_det)
+![Vector](images/got-s8_det.jpg)
 
 ### Description
 
@@ -33,9 +33,9 @@ $python train.py --net vgg16 --epochs 20 --bs 1
 
 See detect.py
 
-  <img src="output/timg3.jpg" width="400"> <img src="images/Adrian_det.jpg" width="400">
-  <img src="output/timg.jpg" width="400"> <img src="images/merlin_det.jpg" width="400">
-  <img src="output/die-welle.jpg" width="400"> <img src="images/India_det.jpg" width="400"> 
+  <img src="images/die-welle_det.jpg" width="400"> <img src="images/Adrian_det.jpg" width="400">
+  <img src="images/timg3_det.jpg" width="400"> <img src="images/merlin_det.jpg" width="400">
+  <img src="images/Starks_det.jpg" width="400"> <img src="images/India_det.jpg" width="400"> 
 
 
 License
