@@ -24,14 +24,17 @@ Followed their codes, helped me go through the Faster-RCNN algorithm. Then I rec
 
 ### Training
 ```
-$python train.py --net vgg16 --epochs 20 --bs 1
+$python train.py --net=vgg16 --epochs=20 --bs=1 --log_dir=logs
 ```
+see train.py for more args.
 * **Custom dataset** The original dataset implementation is quite painful. Here I use [ChainerCV](https://github.com/chainer/chainercv) for dataset, which is quite pytorch style. It's easy to applied to your own data.
 
 
 ### Inference
-
-See detect.py
+```
+$python detect.py --net=vgg16 --bs=1 --load_dir=output --image_dir=samples --save_dir=images
+```
+See detect.py for more args.
 
   <img src="images/die-welle_det.jpg" width="400"> <img src="images/Adrian_det.jpg" width="400">
   <img src="images/timg3_det.jpg" width="400"> <img src="images/merlin_det.jpg" width="400">
