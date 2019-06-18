@@ -1,4 +1,6 @@
+# from https://github.com/chenyuntc/simple-faster-rcnn-pytorch/blob/master/utils/config.py
 from pprint import pprint
+import numpy as np
 
 
 # Default Configs for training
@@ -7,49 +9,84 @@ from pprint import pprint
 
 class Config:
     # data
-    data_dir = 'E:/data/voc07/VOCdevkit/VOC2007/'
-    split = 'trainval'
-    min_size = 600  # image resize
-    max_size = 1000 # image resize
-    num_workers = 8
-    test_num_workers = 8
-    batch_size = 2
+    voc_data_dir = 'E:/data/voc07/VOCdevkit/VOC2007'
+    year = '2007'
+    min_size = 600   # image resize
+    max_size = 1000  # image resize
+    disp_interval = 100
+    test_num_workers = 0
 
     # sigma for l1_smooth_loss
     rpn_sigma = 3.
     roi_sigma = 1.
 
+    # resume
+    resume = False
+
+    logs = 'logs'
+    save_dir = 'output'
+    output_dir = 'result'
+
     # param for optimizer
     # 0.0005 in origin paper but 0.0001 in tf-faster-rcnn
     weight_decay = 0.0005
-    lr_decay = 0.1  # 1e-3 -> 1e-4
-    lr = 1e-3
-
-
-    # visualization
-    env = 'faster-rcnn'  # visdom env
-    port = 8097
-    plot_every = 40  # vis every N iter
-
-    # preset
-    data = 'voc'
-    pretrained_model = 'vgg16'
+    lr_decay_gamma = 0.1  # 1e-3 -> 1e-4
+    train_momentum = 0.9
+    train_double_bias = True
+    train_bias_decay = False
+    lr_decay_step = 5
 
     # training
-    epoch = 14
+    epochs = 20
 
+    pooling_size = 7
 
-    use_adam = False # Use Adam optimizer
-    use_chainer = False # try match everything as chainer
-    use_drop = False # use dropout in RoIHead
-    # debug
-    debug_file = '/tmp/debugf'
+    # Anchor scales for RPN
+    anchor_scales = [8, 16, 32]
+
+    # Anchor ratios for RPN
+    anchor_ratios = [0.5, 1, 2]
+
+    # Feature stride for RPN
+    feat_stride = 16
+
+    pre_nms_topN = 12000
+    post_nms_topN = 2000
+    nms_thresh = 0.7
+    rpn_min_size = 8
+
+    rpn_clobber_positives = False
+    rpn_negative_overlap = 0.3
+    rpn_positive_overlap = 0.7
+    rpn_fg_fraction = 0.25
+    rpn_batchsize = 256
+    rpn_bbox_inside_weights = (1.0, 1.0, 1.0, 1.0)
+    rpn_positive_weight = -1.0
+    PIXEL_MEANS = np.array([[[102.9801, 115.9465, 122.7717]]])
+    TEST_SCALES = (600,)
+    TEST_MAX_SIZE = 1000
+    TEST_BBOX_REG = True
+    TEST_NMS = 0.3
+
+    fg_thresh = 0.5
+    bg_thresh_hi = 0.5
+    bg_thresh_lo = 0.0
+
+    bbox_normalize_means = (0.0, 0.0, 0.0, 0.0)
+    bbox_normalize_stds = (0.1, 0.1, 0.2, 0.2)
+
+    bbox_normalize_targets_precomputed = True
+
+    train_truncated = False
+
+    pooling_mode = 'align'
 
     test_num = 10000
+
     # model
     load_path = None
 
-    caffe_pretrain = False # use caffe pretrained model instead of torchvision
+    caffe_pretrain = False   # use caffe pretrained model instead of torchvision
     caffe_pretrain_path = 'checkpoints/vgg16_caffe.pth'
 
     def _parse(self, kwargs):

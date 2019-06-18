@@ -1,56 +1,37 @@
-import os
+from __future__ import absolute_import
+from __future__ import division
+import torch as t
 import cv2
-import numpy as np
-import torch
-from utils.config import opt
-import matplotlib.pyplot as plt
-import xml.etree.ElementTree as ET
+import os
+from imageio import imread
+from utils.util import im_list_to_blob
 from torch.utils.data import Dataset
-from torchvision import transforms
+from utils.voc_dataset import VOCBboxDataset
 from skimage import transform as sktsf
+from torchvision import transforms as tvtsf
+from utils import util
+import numpy as np
+from utils.config import opt
 
-# https://github.com/chenyuntc/simple-faster-rcnn-pytorch/blob/0.4/data/dataset.py
-# https://github.com/chainer/chainercv/blob/v0.12.0/chainercv/datasets/voc/voc_bbox_dataset.py#L11
 
-def resize_bbox(bbox, in_size, out_size):
-    """Resize bounding boxes according to image resize.
-    The bounding boxes are expected to be packed into a two dimensional
-    tensor of shape :math:`(R, 4)`, where :math:`R` is the number of
-    bounding boxes in the image. The second axis represents attributes of
-    the bounding box. They are :math:`(y_{min}, x_{min}, y_{max}, x_{max})`,
-    where the four attributes are coordinates of the top left and the
-    bottom right vertices.
-    Args:
-        bbox (~numpy.ndarray): An array whose shape is :math:`(R, 4)`.
-            :math:`R` is the number of bounding boxes.
-        in_size (tuple): A tuple of length 2. The height and the width
-            of the image before resized.
-        out_size (tuple): A tuple of length 2. The height and the width
-            of the image after resized.
-    Returns:
-        ~numpy.ndarray:
-        Bounding boxes rescaled according to the given image shapes.
-    """
-    bbox = bbox.copy()
-    y_scale = float(out_size[0]) / in_size[0]
-    x_scale = float(out_size[1]) / in_size[1]
-    bbox[:, 0] = y_scale * bbox[:, 0]
-    bbox[:, 2] = y_scale * bbox[:, 2]
-    bbox[:, 1] = x_scale * bbox[:, 1]
-    bbox[:, 3] = x_scale * bbox[:, 3]
-    return bbox
+def inverse_normalize(img):
+    if opt.caffe_pretrain:
+        img = img + (np.array([122.7717, 115.9465, 102.9801]).reshape(3, 1, 1))
+        return img[::-1, :, :]
+    # approximate un-normalize for visualize
+    return (img * 0.225 + 0.45).clip(min=0, max=1) * 255
+
 
 def pytorch_normalze(img):
     """
     https://github.com/pytorch/vision/issues/223
     return appr -1~1 RGB
     """
-    normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
+    normalize = tvtsf.Normalize(mean=[0.485, 0.456, 0.406],
                                 std=[0.229, 0.224, 0.225])
-    img = torch.from_numpy(img)
-    img = img.permute(2,0,1)
-    img = normalize(img.float())
+    img = normalize(t.from_numpy(img))
     return img.numpy()
+
 
 def caffe_normalize(img):
     """
@@ -61,6 +42,7 @@ def caffe_normalize(img):
     mean = np.array([122.7717, 115.9465, 102.9801]).reshape(3, 1, 1)
     img = (img - mean).astype(np.float32, copy=True)
     return img
+
 
 def preprocess(img, min_size=600, max_size=1000):
     """Preprocess an image for feature extraction.
@@ -77,140 +59,154 @@ def preprocess(img, min_size=600, max_size=1000):
     Returns:
         ~numpy.ndarray: A preprocessed image.
     """
-    H, W, C = img.shape
+    C, H, W = img.shape
     scale1 = min_size / min(H, W)
     scale2 = max_size / max(H, W)
     scale = min(scale1, scale2)
-    #img = np.ascontiguousarray(img, dtype=np.float32)  # uint8 to float32
     img = img / 255.
-    img = sktsf.resize(img, (int(H * scale), int(W * scale), C), mode='reflect',anti_aliasing=False)
+    img = sktsf.resize(img, (C, H * scale, W * scale), mode='reflect',anti_aliasing=False)
     # both the longer and shorter should be less than
     # max_size and min_size
     if opt.caffe_pretrain:
         normalize = caffe_normalize
-    else: 
+    else:
         normalize = pytorch_normalze
     return normalize(img)
-    #return img
 
-class ToTensor(object):
-    """Convert data to Tensor."""
-    
-    def __call__(self, data):
-        img, bbox, label, scale = data
-        img = torch.from_numpy(img)
-        bbox = torch.from_numpy(bbox)
-        label = torch.from_numpy(label)
-        scale = torch.from_numpy(scale)
-        
+
+class Transform(object):
+
+    def __init__(self, min_size=600, max_size=1000, filp=True):
+        self.min_size = min_size
+        self.max_size = max_size
+        self.filp = filp
+
+    def __call__(self, in_data):
+        img, bbox, label = in_data
+        _, H, W = img.shape
+        img = preprocess(img, self.min_size, self.max_size)
+        _, o_H, o_W = img.shape
+        scale = o_H / H
+        bbox = util.resize_bbox(bbox, (H, W), (o_H, o_W))
+
+        # horizontally flip
+        if self.filp:
+            img, params = util.random_flip(
+                img, x_random=True, return_param=True)
+            bbox = util.flip_bbox(
+                bbox, (o_H, o_W), x_flip=params['x_flip'])
+
         return img, bbox, label, scale
 
-transform = transforms.Compose([
-    ToTensor()
-])    
 
-class LoadDataset(Dataset):
-    def __init__(self, data_dir, split='train', use_difficult=False, return_difficult=False, transform=transform):
-        # data_pth = /VOCdevkit/VOC2007
-        id_list_file = os.path.join(data_dir, 'ImageSets/Main/{}.txt'.format(split))
-        assert os.path.exists(id_list_file) == True , "file:{} not found.".format(id_list_file)
-        with open(id_list_file, 'r') as f:
-            id_lines = f.read().splitlines()
-        self.ids = id_lines
-        self.data_dir = data_dir
-        self.use_difficult = use_difficult
-        self.return_difficult = return_difficult
-        self.transform = transform
-        VOC_BBOX_LABEL_NAMES = (
-            'aeroplane',
-            'bicycle',
-            'bird',
-            'boat',
-            'bottle',
-            'bus',
-            'car',
-            'cat',
-            'chair',
-            'cow',
-            'diningtable',
-            'dog',
-            'horse',
-            'motorbike',
-            'person',
-            'pottedplant',
-            'sheep',
-            'sofa',
-            'train',
-            'tvmonitor')
-        self.label_names = VOC_BBOX_LABEL_NAMES
-        
-    def __len__(self):
-        return len(self.ids)
-    
-    def _get_image(self, i):
-        img_path = os.path.join(self.data_dir, 'JPEGImages', i + '.jpg')
-        img = cv2.imread(img_path) # BGR, (333, 500, 3)
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        #img = img.transpose((2, 0, 1))  # HWC -> CHW
-        img = np.ascontiguousarray(img, dtype=np.float32)
-        assert img is not None, 'File Not Found: {}'.format(img_path)
-        return img
-    
-    def _get_annotations(self, i):
-        anno = ET.parse(os.path.join(self.data_dir, 'Annotations', i + '.xml'))
-        bbox, label, difficult = [], [], []
-        
-        for obj in anno.findall('object'):
-            # when in not using difficult split, and the object is
-            # difficult, skipt it.
-            if not self.use_difficult and int(obj.find('difficult').text) == 1:
-                continue
-            
-            difficult.append(int(obj.find('difficult').text))
-            bndbox_anno = obj.find('bndbox')
-            bbox.append([int(bndbox_anno.find(tag).text)-1 for tag in ('xmin', 'ymin', 'xmax', 'ymax')])
-            name = obj.find('name').text.lower().strip()
-            label.append(self.label_names.index(name))
-            
-        bbox = np.stack(bbox).astype(np.float32)
-        label = np.stack(label).astype(np.int32)
-        difficult = np.array(difficult, dtype=np.bool).astype(np.uint8)
-        
-        return bbox, label, difficult
+class Dataset:
+    def __init__(self, opt, split, filp=True):
+        self.opt = opt
+        self.filp = filp
+        self.db = VOCBboxDataset(opt.voc_data_dir, split=split)
+        self.tsf = Transform(opt.min_size, opt.max_size, filp=self.filp)
 
     def __getitem__(self, idx):
-        indx = self.ids[idx]
-        img = self._get_image(indx)
-        bbox, label, difficult = self._get_annotations(indx)
-        H, W, _ = img.shape 
-        img = preprocess(img)
-        _, o_H, o_W = img.shape
-        scale = np.array(o_H / H).astype(np.float32)
-        bbox = resize_bbox(bbox, (H, W), (o_H, o_W))
-        if self.transform:
-            img, bbox, label, scale = self.transform((img, bbox, label, scale))
-            return img, bbox, label, scale
-        else:
-            return img, bbox, label, scale
-        
-    
+        ori_img, bbox, label, difficult = self.db.get_example(idx)
 
-def show_one_image(image, box=None, dim = 3):   
-    #img = image.transpose((2, 0, 1)).transpose((2, 0, 1)).astype(np.uint8).copy() #folat32 causes error
-    if dim == 3:
-        if image.shape[0] == 3:
-            img = image.permute(1,2,0)
-        else:
-            img = image
-    img = img.numpy()
-    if img.dtype == np.float32:
-        img = img.astype(np.uint8).copy()
-    print('shape:{},dtype:{}'.format(img.shape, img.dtype))
-    if box.numpy().any():
-        l = len(box)
-        for i in range(l):
-            xmin, ymin, xmax, ymax = int(box[i][0]), int(box[i][1]), int(box[i][2]), int(box[i][3])
-            cv2.rectangle(img, (xmin, ymin), (xmax, ymax), (255,0,0), 2)
-        plt.imshow(img)
-        plt.show()
-    return img
+        img, bbox, label, scale = self.tsf((ori_img, bbox, label))
+
+        # suit for Net input
+        im_info = np.array((img.shape[1], img.shape[2], scale), dtype=np.float32)
+        gt_boxes = np.append(bbox, label[:, np.newaxis], axis=1).astype(np.float32)
+        num_boxes = gt_boxes.shape[0]
+        # fix some of the strides of a given numpy array are negative.
+        # https://discuss.pytorch.org/t/torch-from-numpy-not-support-negative-strides/3663
+        return img.copy(), im_info.copy(), gt_boxes.copy(), num_boxes
+
+        # return img.copy(), bbox.copy(), label.copy(), scale
+
+    def __len__(self):
+        return len(self.db)
+
+
+class TestDataset:
+    def __init__(self, opt, split='test', use_difficult=True):
+        self.opt = opt
+        self.db = VOCBboxDataset(opt.voc_data_dir, split=split, use_difficult=use_difficult)
+
+    def __getitem__(self, idx):
+        ori_img, bbox, label, difficult = self.db.get_example(idx)
+        _, H, W = ori_img.shape
+        img = preprocess(ori_img)
+        _, o_H, o_W = img.shape
+        scale = o_H / H
+
+        # suit for Net input
+        im_info = np.array((img.shape[1], img.shape[2], scale), dtype=np.float32)
+        gt_boxes = np.append(bbox, label[:, np.newaxis], axis=1).astype(np.float32)
+        num_boxes = gt_boxes.shape[0]
+        # fix some of the strides of a given numpy array are negative.
+        # https://discuss.pytorch.org/t/torch-from-numpy-not-support-negative-strides/3663
+        return img.copy(), im_info.copy(), gt_boxes.copy(), num_boxes
+        #return img, ori_img.shape[1:], bbox, label, difficult
+
+    def __len__(self):
+        return len(self.db)
+
+
+class CusDataset(Dataset):
+    def __init__(self, path='E:/condaDev/fasterrcnn/myimplemention/samples/'):
+        self.path = path
+        self.images = os.listdir(self.path)
+        assert len(self.images) > 0, 'No images found in {}'.format(self.path )
+
+    def __len__(self):
+        return len(self.images)
+
+    def _get_image_blob(self, im):
+        """Converts an image into a network input.
+        Arguments:
+        im (ndarray): a color image in BGR order
+        Returns:
+        blob (ndarray): a data blob holding an image pyramid
+        im_scale_factors (list): list of image scales (relative to im) used
+          in the image pyramid
+        """
+        im_orig = im.astype(np.float32, copy=True)
+        im_orig -= opt.PIXEL_MEANS
+
+        im_shape = im_orig.shape
+        im_size_min = np.min(im_shape[0:2])
+        im_size_max = np.max(im_shape[0:2])
+
+        processed_ims = []
+        im_scale_factors = []
+
+        for target_size in opt.TEST_SCALES:
+            im_scale = float(target_size) / float(im_size_min)
+            # Prevent the biggest axis from being more than MAX_SIZE
+            if np.round(im_scale * im_size_max) > opt.TEST_MAX_SIZE:
+                im_scale = float(opt.TEST_MAX_SIZE) / float(im_size_max)
+            im = cv2.resize(im_orig, None, None, fx=im_scale, fy=im_scale, interpolation=cv2.INTER_LINEAR)
+            im_scale_factors.append(im_scale)
+            processed_ims.append(im)
+
+        # Create a blob to hold the input images
+        blob = im_list_to_blob(processed_ims)[0]
+
+        return blob, np.array(im_scale_factors, dtype=np.float32)
+
+    def __getitem__(self, idx):
+        img_pth = self.path + self.images[idx]
+        im_in = np.array(imread(img_pth))
+        if len(im_in.shape) == 2:
+            im_in = im_in[:, :, np.newaxis]
+            im_in = np.concatenate((im_in, im_in, im_in), axis=2)
+        # rgb -> bgr
+        im = im_in[:, :, ::-1]
+        blobs, im_scales = self._get_image_blob(im)
+        im_blob = blobs
+        assert len(im_scales) == 1, "Only single-image batch implemented"
+        im_info_np = np.array([im_blob.shape[1], im_blob.shape[2], im_scales[0]], dtype=np.float32)
+        im_data = np.transpose(im_blob, (2, 1, 0))
+        gt_boxes = np.ones([1,5], dtype=np.float32)
+        num_boxes = np.array(1)
+        return im.copy(), im_data.copy(), im_info_np.copy(), gt_boxes.copy(), num_boxes, im_scales, self.images[idx]
+
+
