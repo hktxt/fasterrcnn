@@ -26,7 +26,7 @@ Followed their codes, helped me go through the Faster-RCNN algorithm. Then I rec
 ```
 $python train.py --net vgg16 --epochs 20 --bs 1
 ```
-* **Custom dataset** The original dataset implementation is quite painful. Here I use [ChainerCV](https://github.com/chainer/chainercv) for dataset, which is quite pytorch style. It's easy to applied your own data.
+* **Custom dataset** The original dataset implementation is quite painful. Here I use [ChainerCV](https://github.com/chainer/chainercv) for dataset, which is quite pytorch style. It's easy to applied to your own data.
 
 
 ### Inference
@@ -35,7 +35,7 @@ See detect.py
 
   <img src="images/die-welle_det.jpg" width="400"> <img src="images/Adrian_det.jpg" width="400">
   <img src="images/timg3_det.jpg" width="400"> <img src="images/merlin_det.jpg" width="400">
-  <img src="images/Starks_det.jpg" width="400"> <img src="images/India_det.jpg" width="400"> 
+  <img src="images/pornstar_det.jpg" width="400"> <img src="images/India_det.jpg" width="400"> 
 
 
 License
