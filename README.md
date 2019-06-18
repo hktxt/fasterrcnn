@@ -1,7 +1,7 @@
 ### Faster-RCNN
 Faster-RCNN PyTorch Implementation.
 
-![Vector](output/Vector.jpg)
+![Vector](images/_det)
 
 ### Description
 
@@ -9,7 +9,7 @@ This repository is a product when I started learning Faster-RCNN. I investigated
 
 Followed their codes, helped me go through the Faster-RCNN algorithm. Then I reconstructed & rewrited them and made some modifications to try to reimplement it. It is recommended to read their codes to see the specific implementation steps and logic. Also you can just go to the [Dev](/Dev) for more details.
 
-Please upgrade your torch and torchvison to the latest version. 
+#### Please upgrade your torch and torchvison to the latest version. 
 
 
 ### Requirements
@@ -17,7 +17,7 @@ Please upgrade your torch and torchvison to the latest version.
   - python >= 3.6
   - numpy
   - torch >= 1.1.0 (tensorboard)
-  - torchvision >= 0.3 (nms, roi_pooling)
+  - torchvision >= 0.3 (nms, roi_pool, roi_align)
   - opencv
   - CUDA(optional)
 
@@ -33,9 +33,9 @@ $python train.py --net vgg16 --epochs 20 --bs 1
 
 See detect.py
 
-  <img src="output/timg3.jpg" width="400"> <img src="images/Adrian.jpg" width="400">
-  <img src="output/timg.jpg" width="400"> <img src="images/merlin.jpg" width="400">
-  <img src="output/die-welle.jpg" width="400"> <img src="images/Trump.jpg" width="400"> 
+  <img src="output/timg3.jpg" width="400"> <img src="images/Adrian_det.jpg" width="400">
+  <img src="output/timg.jpg" width="400"> <img src="images/merlin_det.jpg" width="400">
+  <img src="output/die-welle.jpg" width="400"> <img src="images/India_det.jpg" width="400"> 
 
 
 License
