@@ -15,7 +15,7 @@ from model.rpn.bbox_transform import clip_boxes
 from utils.util import im_list_to_blob
 from torchvision.ops import nms
 from model.rpn.bbox_transform import bbox_transform_inv
-from model.utils.net_utils import save_net, load_net, vis_detections_1
+from model.utils.net_utils import vis_detections_1
 from model.faster_rcnn.vgg16 import VGG16
 from utils import torch_utils
 # specify visible GPUs
