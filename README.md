@@ -5,7 +5,7 @@ Faster-RCNN PyTorch Implementation.
 
 ### Description
 
-This repository is a product when I started learning Faster-RCNN. I investigated many nice implementations based on PyTorch, which helped me to understand this algorithm. Then I rewrite and reorganize their codes to form this repo. It contains training and inference code of YOLOv3 in PyTorch. It is self-contained on mainstream platform and it supports custom data trianing and multi GPUs as well. The paper can be found [here](https://arxiv.org/abs/1506.01497). 
+This repository is a product when I started learning Faster-RCNN. I investigated many nice implementations based on PyTorch, which helped me to understand this algorithm. Then I rewrite and reorganize their codes to form this repo. It contains training and inference code of Faster-RCNN in PyTorch. It is self-contained on mainstream platform and it supports custom data trianing and multi GPUs as well. The paper can be found [here](https://arxiv.org/abs/1506.01497). 
 
 Followed their codes, helped me go through the Faster-RCNN algorithm. Then I reconstructed & rewrited them and made some modifications to try to reimplement it. It is recommended to read their codes to see the specific implementation steps and logic. Also you can just go to the [Dev](/Dev) for more details.
 
