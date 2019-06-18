@@ -1,7 +1,7 @@
 ### Faster-RCNN
 Faster-RCNN PyTorch Implementation.
 
-![Vector](images/got-s8_det.jpg)
+![Vector](images/oxford-street_det.jpg)
 
 ### Description
 
@@ -35,7 +35,7 @@ See detect.py
 
   <img src="images/die-welle_det.jpg" width="400"> <img src="images/Adrian_det.jpg" width="400">
   <img src="images/timg3_det.jpg" width="400"> <img src="images/merlin_det.jpg" width="400">
-  <img src="images/pornstar_det.jpg" width="400"> <img src="images/India_det.jpg" width="400"> 
+  <img src="images/cycling-figures03_det.jpg" width="400"> <img src="images/India_det.jpg" width="400"> 
 
 
 License
