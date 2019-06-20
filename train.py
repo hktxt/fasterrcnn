@@ -93,7 +93,7 @@ if __name__ == '__main__':
 
     if args.use_tfboard:
         # using tensorboard
-        print('using tensorboard for supervision.')
+        print('using tensorboard for supervision...')
         writer = SummaryWriter(opt.logs)
 
     device = torch_utils.select_device()
