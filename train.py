@@ -1,8 +1,10 @@
 import os
-import torch
 import time
 import argparse
 import numpy as np
+# specify visible GPUs
+os.environ["CUDA_VISIBLE_DEVICES"] = '6'
+import torch
 import torch.nn as nn
 from utils.config import opt
 from torch.utils.tensorboard import SummaryWriter
@@ -11,8 +13,6 @@ from model.faster_rcnn.vgg16 import VGG16
 from evaluate import evaluate
 from model.utils.net_utils import adjust_learning_rate, clip_gradient, save_checkpoint
 from utils import torch_utils
-# specify visible GPUs
-os.environ["CUDA_VISIBLE_DEVICES"] = '2,3,4,5'
 
 
 def parse_args():
@@ -89,6 +89,11 @@ if __name__ == '__main__':
     args = parse_args()
     print('Called with args:')
     print(args)
+
+    if args.use_tfboard:
+        # using tensorboard
+        # tensorboard --logdir=logs
+        writer = SummaryWriter(opt.logs)
 
     device = torch_utils.select_device()
     torch.backends.cudnn.benchmark = True
@@ -207,9 +212,6 @@ if __name__ == '__main__':
                       .format(loss_rpn_cls, loss_rpn_box, loss_rcnn_cls, loss_rcnn_box))
 
                 if args.use_tfboard:
-                    # using tensorboard
-                    # tensorboard --logdir=logs
-                    writer = SummaryWriter(opt.logs)
                     info = {
                         'loss': loss_temp,
                         'loss_rpn_cls': loss_rpn_cls,
