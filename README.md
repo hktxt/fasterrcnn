@@ -10,6 +10,10 @@ This repository is a product when I started learning Faster-RCNN. I investigated
 Followed their codes, helped me go through the Faster-RCNN algorithm. Then I reconstructed & rewrited them and made some modifications to try to reimplement it. It is recommended to read their codes to see the specific implementation steps and logic. Also you can just go to the [Dev](/Dev) for more details.
 
 #### Please upgrade your torch and torchvison to the latest version. 
+```
+pip install --upgrade torch torchvision
+pip install tb-nightly
+```
 
 
 ### Requirements
