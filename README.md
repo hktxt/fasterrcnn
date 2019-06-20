@@ -31,7 +31,8 @@ pip install tb-nightly
 $python train.py --net=vgg16 --epochs=20 --bs=1 --log_dir=logs
 ```
 see train.py for more args.
-* **Custom dataset** The original dataset implementation is quite painful. Here I use [ChainerCV](https://github.com/chainer/chainercv) for dataset, which is quite pytorch style. It's easy to applied to your own data.
+* **Custom dataset** The original dataset implementation is quite painful. Here I use [ChainerCV](https://github.com/chainer/chainercv) for dataset, which is quite pytorch style. It's easy to applied to your own data.  
+
 using tensorboard for supervision
 ```
 tensorboard --logdir logs
