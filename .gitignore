@@ -1,6 +1,4 @@
 .ipynb_checkpoints
 __pycache__
 .idea
-myimplemention/output/
-myimplemention/logs/
-myimplemention/.idea/
+logs

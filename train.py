@@ -3,13 +3,14 @@ import time
 import argparse
 import numpy as np
 # specify visible GPUs
-os.environ["CUDA_VISIBLE_DEVICES"] = '6'
+os.environ["CUDA_VISIBLE_DEVICES"] = '0'
 import torch
 import torch.nn as nn
 from utils.config import opt
 from torch.utils.tensorboard import SummaryWriter
 from utils.dataset import Dataset
 from model.faster_rcnn.vgg16 import VGG16
+from model.faster_rcnn.resnet import resnet
 from evaluate import evaluate
 from model.utils.net_utils import adjust_learning_rate, clip_gradient, save_checkpoint
 from utils import torch_utils
@@ -31,7 +32,7 @@ def parse_args():
                         default='test', type=str)
     parser.add_argument('--net', dest='net',
                         help='vgg16, res101',
-                        default='vgg16', type=str)
+                        default='res50', type=str)
     parser.add_argument('--start_epoch', dest='start_epoch',
                         help='starting epoch',
                         default=0, type=int)
@@ -92,7 +93,7 @@ if __name__ == '__main__':
 
     if args.use_tfboard:
         # using tensorboard
-        # tensorboard --logdir=logs
+        print('using tensorboard for supervision.')
         writer = SummaryWriter(opt.logs)
 
     device = torch_utils.select_device()
@@ -122,6 +123,15 @@ if __name__ == '__main__':
 
     if args.net == 'vgg16':
         fasterRCNN = VGG16(classes, pretrained=False, class_agnostic=False)
+    elif args.net == 'res50':
+        fasterRCNN = resnet(classes, 50, pretrained=False, class_agnostic=False)
+    elif args.net == 'res101':
+        fasterRCNN = resnet(classes, 101, pretrained=False, class_agnostic=False)
+    elif args.net == 'res152':
+        fasterRCNN = resnet(classes, 152, pretrained=False, class_agnostic=False)
+    else:
+        raise Exception("network is not defined")
+    print('creating {}...'.format(args.net))
     fasterRCNN.create_architecture()
 
     lr = args.lr
