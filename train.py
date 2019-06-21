@@ -26,13 +26,13 @@ def parse_args():
                         default='pascal_voc', type=str)
     parser.add_argument('--train_split', dest='train_split',
                         help='splitting train set',
-                        default='trainval', type=str)
+                        default='one', type=str)
     parser.add_argument('--test_split', dest='test_split',
                         help='splitting test set',
                         default='test', type=str)
     parser.add_argument('--net', dest='net',
                         help='vgg16, res101',
-                        default='res50', type=str)
+                        default='vgg16', type=str)
     parser.add_argument('--start_epoch', dest='start_epoch',
                         help='starting epoch',
                         default=0, type=int)
@@ -181,6 +181,7 @@ if __name__ == '__main__':
         for step, (img, im_info, gt_boxes, num_boxes) in enumerate(trainloader):
             img, im_info, gt_boxes, num_boxes = img.to(device), im_info.to(device), gt_boxes.to(device), num_boxes.to(
                 device)
+
             fasterRCNN.zero_grad()  # optimizer.zero_grad() ?
             rois, cls_prob, bbox_pred, rpn_loss_cls, rpn_loss_box, RCNN_loss_cls, RCNN_loss_bbox, rois_label\
                 = fasterRCNN(img, im_info, gt_boxes, num_boxes)

@@ -108,12 +108,15 @@ class Dataset:
 
     def __getitem__(self, idx):
         ori_img, bbox, label, difficult = self.db.get_example(idx)
+        # bbox: (ymin, xmin, ymax, xmax) - 1
 
         img, bbox, label, scale = self.tsf((ori_img, bbox, label))
 
         # suit for Net input
         im_info = np.array((img.shape[1], img.shape[2], scale), dtype=np.float32)
         gt_boxes = np.append(bbox, label[:, np.newaxis], axis=1).astype(np.float32)
+        # ymin, xmin, ymax, xmax -> xmin ymin, xmax, ymax
+        gt_boxes[:, [0, 1, 2, 3]] = gt_boxes[:, [1, 0, 3, 2]]
         num_boxes = gt_boxes.shape[0]
         # fix some of the strides of a given numpy array are negative.
         # https://discuss.pytorch.org/t/torch-from-numpy-not-support-negative-strides/3663

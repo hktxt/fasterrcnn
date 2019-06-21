@@ -207,3 +207,5 @@ if __name__ == '__main__':
 
     print('Evaluating detections')
     evaluate_detections(dataset.db.ids, classes, all_boxes, output_dir, args.split)
+
+

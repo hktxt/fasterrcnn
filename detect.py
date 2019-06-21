@@ -50,7 +50,7 @@ def parse_args():
                         default="images")
     parser.add_argument('--checkepoch', dest='checkepoch',
                         help='checkepoch to load network',
-                        default=0, type=int)
+                        default=19, type=int)
     parser.add_argument('--checkpoint', dest='checkpoint',
                         help='checkpoint to load network',
                         default=5010, type=int)
@@ -171,7 +171,7 @@ if __name__ == '__main__':
     num_images = len(imglist)
     print('Loaded Photo: {} images.'.format(num_images))
 
-    while (num_images >= 0):
+    while (num_images > 0):
         total_tic = time.time()
         if webcam_num == -1:
             num_images -= 1
