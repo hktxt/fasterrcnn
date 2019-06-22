@@ -17,6 +17,7 @@ from torchvision.ops import nms
 from model.rpn.bbox_transform import bbox_transform_inv
 from model.utils.net_utils import vis_detections_1
 from model.faster_rcnn.vgg16 import VGG16
+from model.faster_rcnn.resnet import resnet
 from utils import torch_utils
 # specify visible GPUs
 os.environ["CUDA_VISIBLE_DEVICES"] = '0'
@@ -91,7 +92,7 @@ def _get_image_blob(im):
         im_scale = float(target_size) / float(im_size_min)
         # Prevent the biggest axis from being more than MAX_SIZE
         if np.round(im_scale * im_size_max) > opt.TEST_MAX_SIZE:
-          im_scale = float(opt.TEST_MAX_SIZE) / float(im_size_max)
+            im_scale = float(opt.TEST_MAX_SIZE) / float(im_size_max)
         im = cv2.resize(im_orig, None, None, fx=im_scale, fy=im_scale, interpolation=cv2.INTER_LINEAR)
         im_scale_factors.append(im_scale)
         processed_ims.append(im)
@@ -110,10 +111,10 @@ if __name__ == '__main__':
     print(args)
 
     input_dir = args.load_dir + "/" + args.net
-    if not os.path.exists(input_dir):
-        raise Exception('There is no input directory for loading network from ' + input_dir)
+    #if not os.path.exists(input_dir):
+        #raise Exception('There is no input directory for loading network from ' + input_dir)
     load_name = os.path.join(input_dir, 'faster_rcnn_{}_{}.pth'.format(args.net, args.checkepoch))
-    load_name = 'E:/condaDev/faster_rcnn_1_20_5010.pth'
+    load_name = 'E:/faster_rcnn_1_20_5010.pth'
 
     pascal_classes = np.asarray(['__background__',
                                  'aeroplane', 'bicycle', 'bird', 'boat',
@@ -210,10 +211,11 @@ if __name__ == '__main__':
         # pdb.set_trace()
         det_tic = time.time()
 
-        rois, cls_prob, bbox_pred, \
-        rpn_loss_cls, rpn_loss_box, \
-        RCNN_loss_cls, RCNN_loss_bbox, \
-        rois_label = fasterRCNN(im_data, im_info, gt_boxes, num_boxes)
+        with torch.no_grad():
+            rois, cls_prob, bbox_pred, \
+            rpn_loss_cls, rpn_loss_box, \
+            RCNN_loss_cls, RCNN_loss_bbox, \
+            rois_label = fasterRCNN(im_data, im_info, gt_boxes, num_boxes)
 
         scores = cls_prob.data
         boxes = rois.data[:, :, 1:5]
