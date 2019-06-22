@@ -1,5 +1,7 @@
 import numpy as np
 from PIL import Image
+from matplotlib import pyplot as plt 
+import cv2
 import random
 
 
@@ -271,3 +273,31 @@ def im_list_to_blob(ims):
         blob[i, 0:im.shape[0], 0:im.shape[1], :] = im
 
     return blob
+
+
+def inverse_normalize(img):
+    return (img * 0.225 + 0.45).clip(min=0, max=1) * 255
+
+
+def vis_image(img, gt_boxes, classes=None):
+    bbox = gt_boxes[:,:-1]
+    labels = gt_boxes[:,-1]
+    tl = round(0.001 * max(img.shape[0:2])) + 1  # line thickness
+    color = [np.random.randint(0, 255) for _ in range(3)]
+    if img.shape[0] == 3:
+        image = inverse_normalize(img).transpose(1,2,0).astype(np.int).copy()
+    else:
+        raise Exception('Not CHW format.')
+    
+    for i in range(len(bbox)):
+        x1,y1, x2, y2 = int(bbox[i][0]), int(bbox[i][1]), int(bbox[i][2]), int(bbox[i][3])
+        cv2.rectangle(image, (x1,y1), (x2,y2), (255,0,0), 2)
+        if classes:
+            tf = max(tl - 1, 1)
+            t_size = cv2.getTextSize(classes[i], 0, fontScale=tl / 3, thickness=tf)[0]
+            c2 = x1 + t_size[0], y1 - t_size[1] - 3
+            cv2.rectangle(image, (x1,y1), c2, color, -1)  # filled
+            cv2.putText(image, classes[i], (x1, y1 - 2), 0, tl / 3, [225, 255, 255],
+                                thickness=tf, lineType=cv2.LINE_AA)
+    plt.imshow(image)
+    plt.show()

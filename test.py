@@ -35,7 +35,7 @@ def parse_args():
                         default='vgg16', type=str)
     parser.add_argument('--nw', dest='num_workers',
                         help='number of worker to load data',
-                        default=10, type=int)
+                        default=0, type=int)
     parser.add_argument('--load_dir', dest='load_dir',
                         help='directory to load models', default="output",
                         type=str)
@@ -68,7 +68,7 @@ def parse_args():
                         default=19, type=int)
     parser.add_argument('--vis', dest='vis',
                         help='visualization mode',
-                        action='store_true')
+                        default=False, type=bool)
     # log and diaplay
     parser.add_argument('--use_tb', dest='use_tfboard',
                         help='whether use tensorboard',
@@ -89,7 +89,7 @@ if __name__ == '__main__':
     np.random.seed(1)
     torch.manual_seed(1)
     torch.cuda.manual_seed(1)
-    #torch.cuda.empty_cache()
+    torch.cuda.empty_cache()
 
     print("Loading test data...")
     if args.dataset == "pascal_voc":
