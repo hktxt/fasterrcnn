@@ -12,10 +12,11 @@ from model.utils.net_utils import vis_detections
 from torchvision.ops import nms
 from utils.dataset import Dataset
 from model.faster_rcnn.vgg16 import VGG16
+from model.faster_rcnn.resnet import resnet
 from model.rpn.bbox_transform import bbox_transform_inv, clip_boxes
 from utils import torch_utils
 # specify visible GPUs
-os.environ["CUDA_VISIBLE_DEVICES"] = '2,3,4,5'
+os.environ["CUDA_VISIBLE_DEVICES"] = '0'
 
 
 def parse_args():
@@ -34,7 +35,7 @@ def parse_args():
                         default='vgg16', type=str)
     parser.add_argument('--nw', dest='num_workers',
                         help='number of worker to load data',
-                        default=10, type=int)
+                        default=0, type=int)
     parser.add_argument('--load_dir', dest='load_dir',
                         help='directory to load models', default="output",
                         type=str)
@@ -64,10 +65,10 @@ def parse_args():
                         default=False, type=bool)
     parser.add_argument('--checkepoch', dest='checkepoch',
                         help='checkepoch to load model',
-                        default=1, type=int)
+                        default=19, type=int)
     parser.add_argument('--vis', dest='vis',
                         help='visualization mode',
-                        action='store_true')
+                        default=False, type=bool)
     # log and diaplay
     parser.add_argument('--use_tb', dest='use_tfboard',
                         help='whether use tensorboard',
@@ -88,6 +89,7 @@ if __name__ == '__main__':
     np.random.seed(1)
     torch.manual_seed(1)
     torch.cuda.manual_seed(1)
+    torch.cuda.empty_cache()
 
     print("Loading test data...")
     if args.dataset == "pascal_voc":
@@ -100,13 +102,22 @@ if __name__ == '__main__':
 
     testloader = torch.utils.data.DataLoader(dataset, batch_size=1, num_workers=args.num_workers, shuffle=False)
     model_dir = args.load_dir + "/" + args.net
-    if not os.path.exists(model_dir):
-        raise Exception('There is no input directory for loading network from: ' + model_dir)
+    #if not os.path.exists(model_dir):
+        #raise Exception('There is no input directory for loading network from: ' + model_dir)
     load_name = os.path.join(model_dir, 'faster_rcnn_{}_{}.pth'.format(args.net, args.checkepoch))
-    load_name = os.path.join('E:/condaDev/', 'faster_rcnn_1_20_5010.pth')
+    load_name = os.path.join('E:/faster_rcnn_1_20_5010.pth')
 
     if args.net == 'vgg16':
         fasterRCNN = VGG16(classes, pretrained=False, class_agnostic=False)
+    elif args.net == 'res50':
+        fasterRCNN = resnet(classes, 50, pretrained=False, class_agnostic=False)
+    elif args.net == 'res101':
+        fasterRCNN = resnet(classes, 101, pretrained=False, class_agnostic=False)
+    elif args.net == 'res152':
+        fasterRCNN = resnet(classes, 152, pretrained=False, class_agnostic=False)
+    else:
+        raise Exception("network is not defined")
+    print('creating {}...'.format(args.net))
     fasterRCNN.create_architecture()
 
     print("load checkpoint: {}".format(load_name))
@@ -141,8 +152,10 @@ if __name__ == '__main__':
     for i, (img, im_info, gt_boxes, num_boxes) in enumerate(tqdm(testloader)):
         img, im_info, gt_boxes, num_boxes = img.to(device), im_info.to(device), gt_boxes.to(device), num_boxes.to(
             device)
-        rois, cls_prob, bbox_pred, rpn_loss_cls, rpn_loss_box, RCNN_loss_cls, RCNN_loss_bbox, rois_label \
-            = fasterRCNN(img, im_info, gt_boxes, num_boxes)
+
+        with torch.no_grad():
+            rois, cls_prob, bbox_pred, rpn_loss_cls, rpn_loss_box, RCNN_loss_cls, RCNN_loss_bbox, rois_label \
+                = fasterRCNN(img, im_info, gt_boxes, num_boxes)
 
         det_tic = time.time()
         scores = cls_prob.data

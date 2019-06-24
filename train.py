@@ -26,13 +26,13 @@ def parse_args():
                         default='pascal_voc', type=str)
     parser.add_argument('--train_split', dest='train_split',
                         help='splitting train set',
-                        default='one', type=str)
+                        default='trainval', type=str)
     parser.add_argument('--test_split', dest='test_split',
                         help='splitting test set',
                         default='test', type=str)
     parser.add_argument('--net', dest='net',
                         help='vgg16, res101',
-                        default='vgg16', type=str)
+                        default='res50', type=str)
     parser.add_argument('--start_epoch', dest='start_epoch',
                         help='starting epoch',
                         default=0, type=int)
@@ -64,7 +64,7 @@ def parse_args():
                         default=0.001, type=float)
     parser.add_argument('--lr_decay_step', dest='lr_decay_step',
                         help='step to do learning rate decay, unit is epoch',
-                        default=20, type=int)
+                        default=5, type=int)
     parser.add_argument('--lr_decay_gamma', dest='lr_decay_gamma',
                         help='learning rate decay ratio',
                         default=0.1, type=float)
@@ -192,8 +192,8 @@ if __name__ == '__main__':
             # backward
             optimizer.zero_grad()
             loss.backward()
-            if args.net == "vgg16":
-                clip_gradient(fasterRCNN, 10.)
+            #if args.net == "vgg16":
+            clip_gradient(fasterRCNN, 10.)
             optimizer.step()
 
             if step % args.disp_interval == 0:
