@@ -26,7 +26,7 @@ def parse_args():
                         default='pascal_voc', type=str)
     parser.add_argument('--train_split', dest='train_split',
                         help='splitting train set',
-                        default='trainval', type=str)
+                        default='one', type=str)
     parser.add_argument('--test_split', dest='test_split',
                         help='splitting test set',
                         default='test', type=str)
@@ -79,7 +79,7 @@ def parse_args():
     # log and diaplay
     parser.add_argument('--use_tb', dest='use_tfboard',
                         help='whether use tensorboard',
-                        default=True, type=bool)
+                        default=False, type=bool)
 
     args = parser.parse_args()
     return args
