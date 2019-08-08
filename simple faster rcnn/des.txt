@@ -1,2 +1,0 @@
-simple faster rcnn
-可以训练，但是测试时总是占用太多内存
