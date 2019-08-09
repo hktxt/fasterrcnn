@@ -26,7 +26,7 @@ def parse_args():
                         default='pascal_voc', type=str)
     parser.add_argument('--train_split', dest='train_split',
                         help='splitting train set',
-                        default='one', type=str)
+                        default='trainval', type=str)
     parser.add_argument('--test_split', dest='test_split',
                         help='splitting test set',
                         default='test', type=str)

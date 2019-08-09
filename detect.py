@@ -114,7 +114,7 @@ if __name__ == '__main__':
     #if not os.path.exists(input_dir):
         #raise Exception('There is no input directory for loading network from ' + input_dir)
     load_name = os.path.join(input_dir, 'faster_rcnn_{}_{}.pth'.format(args.net, args.checkepoch))
-    load_name = 'E:/faster_rcnn_1_20_5010.pth'
+    load_name = 'E:/condaDev/faster_rcnn_1_20_5010.pth'
 
     pascal_classes = np.asarray(['__background__',
                                  'aeroplane', 'bicycle', 'bird', 'boat',
